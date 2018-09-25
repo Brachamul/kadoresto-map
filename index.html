@@ -1,0 +1,143 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8' />
+	<title></title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		#map {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+		.marker {
+			background-color: rgba(0,0,0,.2);
+			opacity: .9;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			cursor: pointer;
+		}
+		.mapboxgl-popup {
+			max-width: 200px;
+		}
+
+		.mapboxgl-popup-content {
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+		}
+
+		.marker.reviews--some { width: 10px; height: 10px; }
+		.marker.reviews--lots { width: 16px; height: 16px; }
+		.marker.reviews--tons { width: 22px; height: 22px; }
+
+		.marker.status--normal.rating--good { background-color: #99c199; }
+		.marker.status--normal.rating--great { background-color: #4c924c; }
+		.marker.status--normal.rating--amazing { background-color: #006400; }
+
+		.marker.status--normal { background-color: darkgreen; }
+		.marker.status--go		{ background-color: goldenrod; }
+		.marker.status--hired	{ background-color: #451366; }
+
+		#features {
+			top: 0;
+			height: 100px;
+			margin-top: 20px;
+			width: 250px;
+		}
+
+		.map-overlay {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			background: rgba(255, 255, 255, 0.8);
+			margin-right: 20px;
+			font-family: Arial, sans-serif;
+			overflow: auto;
+			border-radius: 3px;
+		}
+
+	</style>
+</head>
+<body>
+
+<div id='map'></div>
+<div class='map-overlay' id='features'><h2>InfoResto</h2><div id='inforesto'><p>Survolez un restaurant !</p></div></div>
+
+<script src="features.js"></script>
+
+<script>
+
+mapboxgl.accessToken = 'pk.eyJ1IjoiYnJhY2hhbXVsIiwiYSI6ImNpanp1NnQ5YjAwNjV2a2x6cW56MjhiemQifQ.tRaC5OgEB4KI9MhznI8NZw';
+
+var map = new mapboxgl.Map({
+	container: 'map',
+	style: 'mapbox://styles/brachamul/cjmdne1a0jlvr2sqt32yuib9b',
+//	style: 'mapbox://styles/mapbox/light-v9',
+	center: [2.34, 48.86],
+	zoom: 12
+});
+
+map.on('mousemove', function(e) {
+	var restaurants = map.queryRenderedFeatures(e.point, {
+		layers: ['test-kadoresto']
+	});
+	
+	if (restaurants.length > 0) {
+		r = restaurants[0]
+		document.getElementById('inforesto').innerHtml = '<h3>' + r.name + '</h3><p>' + r.status + '</p>'
+	} else {
+		document.getElementById('inforesto').innerHTML = '<p>Survolez un restaurant !</p>';
+	}
+});
+
+//	FeatureCollection.features.forEach(function(marker) {
+//	
+//		// create a HTML element for each feature
+//		var el = document.createElement('div');
+//		var classes = 'marker'
+//		var r = marker.properties
+//	
+//		if (r.ta_rating == 4.0) { classes += ' rating--good'}
+//		if (r.ta_rating == 4.5) { classes += ' rating--great'}
+//		if (r.ta_rating == 5.0) { classes += ' rating--amazing'}
+//	
+//		if (15 <= r.ta_reviews < 30)  { classes += ' reviews--some'}
+//		if (30 <= r.ta_reviews < 60 ) { classes += ' reviews--lots'}
+//		if (60 <= r.ta_reviews )      { classes += ' reviews--tons'}
+//	
+//		if (r.status == "Confirmé") { classes += ' status--hired'}
+//		var valid_statuses = ['Suggestion', 'À étudier', 'À démarcher', 'Interessé' ]
+//		// if restaurant doesn't yet have a status, or has a positive status, it is shown
+//		if (!r.status || valid_statuses.includes(r.status)) { classes += ' status--normal'}
+//		if (r.go) { classes += ' status--go'}
+//	
+//		el.className = classes;
+
+//		// make a marker for each feature and add to the map
+//		new mapboxgl.Marker(el)
+//			.setLngLat(marker.geometry.coordinates)
+//			.setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+//			.setHTML('<h3>' + r.name + '</h3><p>' + r.status + '</p>'))
+//			.addTo(map);
+//		});
+
+
+
+
+
+</script>
+
+</body>
+</html>
