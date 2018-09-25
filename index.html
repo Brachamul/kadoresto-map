@@ -6,7 +6,6 @@
 	<meta charset='utf-8' />
 	<title></title>
 	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
 	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
@@ -14,6 +13,7 @@
 		body {
 			margin: 0;
 			padding: 0;
+			font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 		}
 		#map {
 			position: absolute;
@@ -21,32 +21,27 @@
 			bottom: 0;
 			width: 100%;
 		}
-		#features {
-			top: 0;
-			height: 100px;
-			margin-top: 20px;
-			width: 250px;
-		}
 		.map-overlay {
-			position: absolute;
-			bottom: 0;
+			margin: 1rem; padding: 1rem;
+			top: 0;
 			right: 0;
-			background: rgba(255, 255, 255, 0.8);
-			margin-right: 20px;
-			font-family: Arial, sans-serif;
+			width: 250px;
+			position: absolute;
+			background: rgba(255, 255, 255, 0.95);
+			box-shadow: 1px 1px 5px 0px rgba(0,0,0,.5);
 			overflow: auto;
-			border-radius: 3px;
+			border-radius: 4px;
 		}
+		.map-overlay *:first-child { margin-top: 0; }
+		.map-overlay *:last-child { margin-bottom: 0; }
+		.map-overlay:not(.feature-details) { border: 2px dashed gray; }
 	</style>
 </head>
 <body>
 
 <div id='map'></div>
-<div class='map-overlay' id='features'>
-	<h2>InfoResto</h2>
-	<div id='inforesto'>
+<div class='map-overlay feature-details' id="inforesto">
 		<p>Survolez un restaurant !</p>
-	</div>
 </div>
 
 <script src="features.js"></script>
@@ -63,17 +58,34 @@ var map = new mapboxgl.Map({
 	zoom: 12
 });
 
+function qs(x) { return document.querySelector(x) }
+
 map.on('mousemove', function(e) {
 	var restaurants = map.queryRenderedFeatures(e.point, {
 		layers: ['test-kadoresto']
 	});
 	if (restaurants.length > 0) {
-		r = restaurants[0]
-		document.getElementById('inforesto').innerHtml = '<h3>' + r.name + '</h3><p>' + r.status + '</p>'
+		map.getCanvas().style.cursor = 'pointer';
+		r = restaurants[0].properties
+		console.log(r)
+		qs('.feature-details').innerHTML = `
+			<h3>${r.name}</h3>
+			<p>Noté ${r.ta_rating} avec ${r.ta_reviews} avis</p>
+			<p>${r.address}</p>
+			<p><a href="${r.ta_url}" target="_blank"><small>[Tripadvisor]</small></a></p>
+			`
+//${r.ta_rating}
+//${r.ta_url}
 	} else {
-		document.getElementById('inforesto').innerHTML = '<p>Survolez un restaurant !</p>';
+		map.getCanvas().style.cursor = 'default';
+		qs('.feature-details').innerHTML = '<p>Survolez un restaurant !</p>';
 	}
 });
+
+map.on('click', function() {
+	qs('#inforesto').classList.toggle('feature-details')
+	qs('.feature-details').innerHTML = '<p>Survolez un restaurant !</p>';
+})
 
 </script>
 
