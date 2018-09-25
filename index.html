@@ -22,27 +22,35 @@
 			width: 100%;
 		}
 		.map-overlay {
-			margin: 1rem; padding: 1rem;
+			margin: .5rem; padding: .5rem;
 			top: 0;
 			right: 0;
 			width: 250px;
 			position: absolute;
-			background: rgba(255, 255, 255, 0.95);
+			background: rgba(255, 255, 255, 0.9);
 			box-shadow: 1px 1px 5px 0px rgba(0,0,0,.5);
 			overflow: auto;
 			border-radius: 4px;
+			transition: opacity .25s ease-in-out;
+		}
+		@media (max-width: 800px) {
+			.map-overlay {
+				width: calc(100% - 2rem);
+			}
 		}
 		.map-overlay *:first-child { margin-top: 0; }
 		.map-overlay *:last-child { margin-bottom: 0; }
-		.map-overlay:not(.feature-details) { border: 2px dashed gray; }
+		.pin { position: absolute; font-size: 1.4rem; right: 0; top: 0; transform: translate(-.35rem, .25rem); transition: all .15s ease-out;  }
+		.map-overlay.feature-details + .pin { opacity: 0; transform: translate(0, 0); }
+		.hidden { opacity: 0; }
+
+		.map-overlay h1, h2, h3, h4, h5, h6, p { margin: 0; }
 	</style>
 </head>
 <body>
 
 <div id='map'></div>
-<div class='map-overlay feature-details' id="inforesto">
-		<p>Survolez un restaurant !</p>
-</div>
+<div class='map-overlay feature-details hidden' id="inforesto"></div><div class="pin">📌</div>
 
 <script src="features.js"></script>
 
@@ -66,25 +74,23 @@ map.on('mousemove', function(e) {
 	});
 	if (restaurants.length > 0) {
 		map.getCanvas().style.cursor = 'pointer';
+		qs('.feature-details').classList.remove('hidden');
 		r = restaurants[0].properties
-		console.log(r)
 		qs('.feature-details').innerHTML = `
 			<h3>${r.name}</h3>
 			<p>Noté ${r.ta_rating} avec ${r.ta_reviews} avis</p>
 			<p>${r.address}</p>
 			<p><a href="${r.ta_url}" target="_blank"><small>[Tripadvisor]</small></a></p>
 			`
-//${r.ta_rating}
-//${r.ta_url}
 	} else {
 		map.getCanvas().style.cursor = 'default';
-		qs('.feature-details').innerHTML = '<p>Survolez un restaurant !</p>';
+		qs('.feature-details').classList.add('hidden');
 	}
 });
 
 map.on('click', function() {
 	qs('#inforesto').classList.toggle('feature-details')
-	qs('.feature-details').innerHTML = '<p>Survolez un restaurant !</p>';
+	qs('.feature-details').classList.add('hidden');
 })
 
 </script>
