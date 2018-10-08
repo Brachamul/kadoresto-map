@@ -48,6 +48,10 @@
 		.hidden { opacity: 0; }
 
 		.map-overlay h1, h2, h3, h4, h5, h6, p { margin: 0; }
+
+		.mapboxgl-ctrl-attrib, .mapboxgl-ctrl-logo { display: none; }
+		
+
 	</style>
 </head>
 <body>
@@ -95,6 +99,13 @@ map.on('click', function() {
 	qs('#inforesto').classList.toggle('feature-details')
 	qs('.feature-details').classList.add('hidden');
 })
+
+map.addControl(new mapboxgl.GeolocateControl({
+    positionOptions: {
+        enableHighAccuracy: true
+    },
+    trackUserLocation: true
+}));
 
 </script>
 
